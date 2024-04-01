@@ -7,8 +7,9 @@
 
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/app.css';
-import 'bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css'
 
-require('bootstrap');
+import './js/theme';
+import { WOW } from 'wowjs/dist/wow.min'
 console.log('hello world');
+
+window.WOW = WOW;

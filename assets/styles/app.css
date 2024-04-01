@@ -1,4 +1,3 @@
-/*@import "~bootstrap/scss/bootstrap";:*/
-body {
-    background-color: white;
-}
+@import "css/theme.css";
+
+@import "css/main.css";
