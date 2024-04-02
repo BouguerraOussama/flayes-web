@@ -2,14 +2,18 @@
  * Welcome to your app's main JavaScript file!
  *
  * We recommend including the built version of this JavaScript file
- * (and its CSS file) in your base layout (base.html.twig).
+ * (and its CSS file) in your twig elements layout (public.html.twig).
  */
 
-// any CSS you import will output into a single css file (app.css in this case)
-import './styles/app.css';
 
-import './js/theme';
-import { WOW } from 'wowjs/dist/wow.min'
-console.log('hello world');
 
-window.WOW = WOW;
+
+console.log(window.location.pathname);
+if (document.URL.includes('/OfferFunding/')){
+    document.getElementById("header").classList.add('header-section-2')
+    document.getElementById("header").classList.add('plan-header')
+}
+
+$(document).ready(()=>{
+    $()
+})

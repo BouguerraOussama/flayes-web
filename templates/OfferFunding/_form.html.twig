@@ -1,4 +1,9 @@
 {{ form_start(form) }}
     {{ form_widget(form) }}
-<button class="btn">{{ button_label|default('Save') }}</button>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    <button class="btn btn-primary">{{ button_label|default('Save') }}</button>
+</div>
+
 {{ form_end(form) }}

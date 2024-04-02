@@ -1,11 +1,29 @@
-{% extends 'base.html.twig' %}
+{% extends 'public.html.twig' %}
 
 {% block title %}New Funding{% endblock %}
 
+{% block banner %}
+    {% include 'twig elements/banner_invest.html.twig' %}
+{% endblock %}
+
 {% block body %}
-    <h1>Create new Funding</h1>
+    {{ include('twig elements/OfferFunding components/projects_section.html.twig') }}
 
-    {{ include('OfferFunding/_form.html.twig') }}
 
-    <a href="{{ path('app_Offerfunding_index') }}">back to list</a>
+    <!-- Modal -->
+    <div class="modal fade" id="addOfferForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{ include('OfferFunding/_form.html.twig') }}
+                </div>
+
+            </div>
+        </div>
+    </div>
+
 {% endblock %}

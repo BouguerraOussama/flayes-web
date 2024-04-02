@@ -1,0 +1,29 @@
+<section class="offer-section padding-top padding-bottom">
+    <div class="ball-group-1" data-paroller-factor="-0.30" data-paroller-factor-lg="0.60"
+         data-paroller-type="foreground" data-paroller-direction="horizontal">
+        <img src="{{ asset('assets/images/balls/ball-group1.png') }}" alt="balls">
+    </div>
+    <div class="ball-group-2" data-paroller-factor="0.30" data-paroller-factor-lg="-0.30"
+         data-paroller-type="foreground" data-paroller-direction="horizontal">
+        <img src="{{ asset('assets/images/balls/ball-group2.png') }}" alt="balls">
+    </div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xl-7">
+                <div class="section-header">
+                    <span class="cate">INVESTMENT OFFER</span>
+                    <h2 class="title">OUR INVESTMENT PLANS</h2>
+                    <p>
+                        Flayes provides a straightforward and transparent mechanism to attract investments and make more profits.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="offer-wrapper">
+            {% block offerCards %}
+                {{ include('twig elements/OfferFunding components/projectCard.html.twig') }}
+            {% endblock offerCards %}
+        </div>
+    </div>
+</section>
+<!--=======Offer-Section Ends Here=======-->
