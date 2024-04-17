@@ -1,10 +1,8 @@
-{% extends 'public.html.twig' %}
+{% extends 'dashboard.html.twig' %}
 
-{% block title %}Offer index{% endblock %}
+{% block title %}Offer user index{% endblock %}
 
-{% block banner %}
-    {% include 'twig elements/banner_invest.html.twig' %}
-{% endblock %}
+
 
 {% block body %}
 
@@ -29,7 +27,7 @@
                 <td>{{ offer.title }}</td>
                 <td>{{ offer.description }}</td>
                 <td>{{ offer.status }}</td>
-                <td>{{ offer.dateCreated ? offer.dateCreated|date('Y-m-d') : '' }}</td>
+                <td><i class="far fa-calendar"></i>{{ offer.dateCreated ? offer.dateCreated|date('Y-m-d') : '' }}</td>
                 <td>
 {#                    <a href="{{ path('', {'id': offer.id}) }}">show</a>#}
                     <a href="{{ path('app_OfferFunding_edit', {'id': offer.id}) }}">edit</a>

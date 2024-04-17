@@ -7,7 +7,95 @@
 {% endblock %}
 
 {% block body %}
-    {{ include('twig elements/OfferFunding components/projects_section.html.twig') }}
+    <section class="offer-section padding-top padding-bottom">
+        <div class="ball-group-1" data-paroller-factor="-0.30" data-paroller-factor-lg="0.60"
+             data-paroller-type="foreground" data-paroller-direction="horizontal">
+            <img src="{{ asset('assets/images/balls/ball-group1.png') }}" alt="balls">
+        </div>
+        <div class="ball-group-2" data-paroller-factor="0.30" data-paroller-factor-lg="-0.30"
+             data-paroller-type="foreground" data-paroller-direction="horizontal">
+            <img src="{{ asset('assets/images/balls/ball-group2.png') }}" alt="balls">
+        </div>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-xl-7">
+                    <div class="section-header">
+                        <span class="cate">INVESTMENT OFFER</span>
+                        <h2 class="title">OUR INVESTMENT PLANS</h2>
+                        <p>
+                            Flayes provides a straightforward and transparent mechanism to attract investments and make
+                            more profits.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="offer-wrapper">
+                {% block projectCards %}
+                    {{ include('twig elements/OfferFunding components/projectCard.html.twig') }}
+                {% endblock projectCards %}
+            </div>
+            {# ********** OFFERSSSSSSSSSSSSSSSSSSSSSSSSSS SECTION STARTS HERE ************#}
+            <div class="row justify-content-center mt-5">
+                <div class="col-lg-8 col-md-10">
+                    <div class="section-header">
+                        <span class="cate">Here are your offers</span>
+                        <h2 class="title">
+                            Here you'll find all the offers you made
+                        </h2>
+                        <p class="mw-100">
+                            Manage your offers as you desire and check their staus
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="tab faq-tab">
+                <ul class="tab-menu">
+                    <li>Offers i made</li>
+                    <li class="active">My Offers</li>
+                </ul>
+                <!-- Offers i made here -->
+                <div class="tab-area">
+                    <div class="tab-item">
+                        <div class="faq-wrapper">
+                            <div class="faq-item active open">
+                                <div class="faq-title">
+                                    <h5 class="title">Can i invest using cryptocurrency?</h5>
+                                    <span class="right-icon"></span>
+                                </div>
+                                <div class="faq-content">
+                                    <p>
+                                        Ea commodi eius nisi fugiat eligendi neque repellendus vero, aliquam temporibus,
+                                        dicta optio eveniet saepe. Beatae hic fugiat qui possimus doloribus? Ratione,
+                                        molestiae magnam.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-item active">
+                        <div class="faq-wrapper">
+
+                            <div class="faq-item active open">
+                                <div class="faq-title">
+                                    <h5 class="title">Can i invest using cryptocurrency?</h5>
+                                    <span class="right-icon"></span>
+                                </div>
+                                <div class="faq-content">
+                                    <p>
+                                        Ea commodi eius nisi fugiat eligendi neque repellendus vero, aliquam temporibus,
+                                        dicta optio eveniet saepe. Beatae hic fugiat qui possimus doloribus? Ratione,
+                                        molestiae magnam.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--=======Offer-Section Ends Here=======-->
 
 
     <!-- Modal -->
@@ -15,11 +103,12 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Offer</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    {{ include('OfferFunding/_form.html.twig') }}
+                    {{ include('OfferFunding/_form.html.twig', {'button_label': 'Save'}) }}
+
                 </div>
 
             </div>

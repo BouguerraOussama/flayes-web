@@ -48,8 +48,10 @@
 </head>
 <body>
 <div class="main--body">
+	{% include 'twig elements/preloader.html.twig' %}
+
 	{% block navbar %}
-		{% include 'twig elements/preloader.html.twig' %}
+
 		{% include 'twig elements/nav.html.twig' %}
 	{% endblock %}
 
@@ -58,7 +60,6 @@
 	{% endblock %}
 
 	{% block body %}
-		<!-- Button trigger modal -->
 
 	{% endblock %}
 

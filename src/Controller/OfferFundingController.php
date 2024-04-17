@@ -10,6 +10,7 @@ use App\Repository\FundingRepository;
 use App\Repository\OfferRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Validator\Constraints\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,7 +35,9 @@ class OfferFundingController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $formData = $form->getData();
             $formData->setDateCreated(new \DateTime());
+            $formData->setStatus(0);
             $funding=$formData->getFunding();
+            $this->calculateOfferScore($funding);
 
             $entityManager->persist($offer);
             $entityManager->persist($funding);
@@ -54,7 +57,8 @@ class OfferFundingController extends AbstractController
     {
         $offer = $entityManager->getRepository(Offer::class)->find($id);
         $funding = $offer->getFunding(); // Assuming Offer has a method to retrieve associated Funding
-        dump($funding);
+        $this->calculateOfferScore($funding);
+
         if (!$offer) {
             throw $this->createNotFoundException('The offer does not exist');
         }
@@ -75,11 +79,10 @@ class OfferFundingController extends AbstractController
             'form' => $form,
         ]);
     }
-    #[Route('/{id}', name: 'app_offer_delete', methods: ['POST'])]
+    #[Route('/{id}', name: 'app_offer_delete')]
     public function delete(Request $request, $id , EntityManagerInterface $entityManager,OfferRepository $offerRepository): Response
     {
         $offer = $offerRepository->find($id);
-
 
         if ($offer) {
             $entityManager->remove($offer);
@@ -88,9 +91,80 @@ class OfferFundingController extends AbstractController
         }
         else{
             dump($offer);
-            die("Couldn't remove offer");
+            die("Error offer not found");
         }
         return $this->redirectToRoute('app_Offerfunding_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    private function calculateOfferScore(Funding $funding) {
+        switch ($funding->getType()) {
+            case 'dept':
+                switch ($funding->getTextattribute()) {
+                    case 'AAA':
+                        $riskScore = 100;
+                        break;
+                    case 'AA+':
+                        $riskScore = 90;
+                        break;
+                    case 'AA':
+                        $riskScore = 80;
+                        break;
+                    case 'A+':
+                        $riskScore = 70;
+                        break;
+                    case 'A':
+                        $riskScore = 60;
+                        break;
+                    case 'BBB+':
+                        $riskScore = 50;
+                        break;
+                    case 'BBB':
+                        $riskScore = 40;
+                        break;
+                    case 'BB+':
+                        $riskScore = 30;
+                        break;
+                    case 'BB':
+                        $riskScore = 20;
+                        break;
+                    default:
+                        $riskScore = 0; // Default score for unknown risk appetite
+                }
+
+                $score = ($funding->getAttribute1() * 0.4) +($funding->getAttribute2() * 0.3 ) + ($funding->getAttribute3() * 0.2) + ($riskScore * 0.1);
+
+                break;
+            case 'revenue':
+                switch($funding->getTextattribute()){
+                    case'On sails':
+                        $score=($funding->getAttribute1() * 0.4)+ ($funding->getAttribute3() * 0.3);
+                        break;
+                    case 'On revenue':
+                        $score=($funding->getAttribute1() * 0.4)+ ($funding->getAttribute2() * 0.3);
+                        break;
+                }
+                 break;
+            case 'equity':
+                switch ($funding->getTextattribute()) {
+                    case 'Low':
+                        $riskScore = 40;
+                        break;
+                    case 'Medium':
+                        $riskScore = 30;
+                        break;
+                    case 'High':
+                        $riskScore = 20;
+                        break;
+                    default:
+                        $riskScore = 0; // Default score for unknown risk appetite
+                }
+                $score=($funding->getAttribute1() * 0.4)  + ($funding->getAttribute2() * 0.3)   + ($funding->getAttribute3() * 0.2) + ($riskScore * 0.1);
+                 break;
+        }
+        $funding->setScore($score);
+    }
+
+
+
 
 }
