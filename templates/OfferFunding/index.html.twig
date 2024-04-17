@@ -1,11 +1,108 @@
-{% extends 'dashboard.html.twig' %}
+{% extends 'public.html.twig' %}
 
 {% block title %}Offer user index{% endblock %}
 
+{% block banner %}
+
+    {% include 'twig elements/banner_myOffers.html.twig' %}
+{% endblock %}
 
 
 {% block body %}
+    <div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-lg-8 col-md-10">
+            <div class="section-header">
+                <span class="cate">Here are your offers</span>
+                <h2 class="title">
+                    Here you'll manage all your offers
+                </h2>
+                <p class="mw-100">
+                    Manage your offers as you desire and check their staus
+                </p>
+            </div>
+        </div>
+    </div>
+        <div class="tab faq-tab">
+            <ul class="tab-menu">
+                <li>Offers i made</li>
+                <li class="active">My Offers</li>
+            </ul>
+            <!-- Offers i made here -->
+            <div class="tab-area">
+                <div class="tab-item">
+                    {% for key, offer in offers %}
+                        {% if fundings[key] is defined %}
+                        {% set funding = fundings[key] %}
+                    <div class="faq-wrapper">
+                        <div class="faq-item ">
+                            <div class="faq-title">
+                                <h5 class="title">{{ offer.title }}</h5>
+                                <span class="right-icon"></span>
+                            </div>
+                            <div class="faq-content">
+                                <p><strong>Description:</strong> {{ offer.description }}</p>
 
+                                {% set status = offer.status %}
+                                {% if status == 0 %}
+                                    <p><strong>Status:</strong> waiting for admin to verify</p>
+                                {% elseif status == 1 %}
+                                    <p><strong>Status:</strong> project owner can see your offer</p>
+                                {% elseif status == 2 %}
+                                    <p><strong>Status:</strong> project owner can't see your offer admin denied it</p>
+                                {% elseif status == 3 %}
+                                    <p><strong>Status:</strong> project owner accepted your offer</p>
+                                {% elseif status == 4 %}
+                                    <p><strong>Status:</strong> project owner denied your offer</p>
+                                {% endif %}
+                                {% set type=funding.type %}
+                                <p><strong>Offer type:</strong> {{ type }}</p>
+                                <p><strong>Amount of investment:</strong> {{ funding.attribute1 }} dt</p>
+                                {% if type == "dept" %}
+                                    <p><strong>Interest rate:</strong> {{ funding.attribute2 }} %</p>
+                                    <p><strong>Duration of investment:</strong> {{ funding.attribute3 }} years</p>
+                                    <p><strong>Credit rating:</strong> {{ funding.textAttribute }} </p>
+                                {% elseif type == "equity" %}
+                                    <p><strong>Expected return on investment:</strong> {{ funding.attribute2 }} % of equity</p>
+                                    <p><strong>Investment horizon in months:</strong> {{ funding.attribute3 }} months</p>
+                                    <p><strong>Risk appetite:</strong> {{ funding.textAttribute }} </p>
+                                {% elseif type == "revenue" %}
+                                    <p><strong>percentage of profit:</strong> {{ funding.attribute2 }} %</p>
+                                    <p><strong>profit margin (%) on product sale:</strong> {{ funding.attribute3 }} %</p>
+                                    <p><strong>Revenue category:</strong> {{ funding.textAttribute }} </p>
+                                    {% endif %}
+                                <a class="btn btn-outline-success btn-sm" href="{{ path('app_OfferFunding_edit', {'id': offer.id}) }}" >edit</a>
+
+                                <a class="btn btn-outline-danger btn-sm" href="{{ path('app_offer_delete', {'id': offer.id}) }}">delete</a>
+                            </div>
+                        </div>
+                    </div>
+                        {% endif %}
+                    {% else %}
+                            <h1 >no offers found</h1>
+                    {% endfor %}
+                </div>
+                <div class="tab-item active">
+                    <div class="faq-wrapper">
+
+                        <div class="faq-item active open">
+                            <div class="faq-title">
+                                <h5 class="title">Can i invest using cryptocurrency?</h5>
+                                <span class="right-icon"></span>
+                            </div>
+                            <div class="faq-content">
+                                <p>
+                                    Ea commodi eius nisi fugiat eligendi neque repellendus vero, aliquam temporibus,
+                                    dicta optio eveniet saepe. Beatae hic fugiat qui possimus doloribus? Ratione,
+                                    molestiae magnam.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     <h1>Offer index</h1>
 
 
@@ -43,4 +140,5 @@
     </table>
 
     <a href="{{ path('app_OfferFunding_new') }}">Create new</a>
+    </div>
 {% endblock %}

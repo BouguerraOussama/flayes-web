@@ -4686,9 +4686,9 @@ body *::-webkit-scrollbar-track {
     padding-left: 60px;
 }
 
-.faq-item .faq-content p {
-    margin-top: 0;
-}
+/*.faq-item .faq-content p {*/
+/*    margin-top: 0;*/
+/*}*/
 
 .faq-item.active .faq-content {
     display: block;
