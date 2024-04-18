@@ -56,16 +56,16 @@ class OfferFundingController extends AbstractController
     public function edit(Request $request, $id , EntityManagerInterface $entityManager): Response
     {
         $offer = $entityManager->getRepository(Offer::class)->find($id);
-        $funding = $offer->getFunding(); // Assuming Offer has a method to retrieve associated Funding
+        $funding = $offer->getFunding();
         $this->calculateOfferScore($funding);
 
         if (!$offer) {
             throw $this->createNotFoundException('The offer does not exist');
         }
 
-        $form = $this->createForm(OfferFundingType::class, $offer,[
-            'funding' => $funding]
-        );
+        $form = $this->createForm(OfferFundingType::class, $offer, [
+            'funding' => $funding,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -74,11 +74,12 @@ class OfferFundingController extends AbstractController
             return $this->redirectToRoute('app_Offerfunding_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('OfferFunding/edit.html.twig', [
-            'Offer' => $offer,
-            'form' => $form,
+        return $this->render('OfferFunding/edit.html.twig', [
+            'offer' => $offer,
+            'form' => $form->createView(),
         ]);
     }
+
     #[Route('/{id}', name: 'app_offer_delete')]
     public function delete(Request $request, $id , EntityManagerInterface $entityManager,OfferRepository $offerRepository): Response
     {

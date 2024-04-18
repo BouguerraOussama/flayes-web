@@ -2,7 +2,7 @@
 
     {{form_label(form.title)}}
     {{form_widget(form.title,{'attr':{'class':'form-control' , 'id':'offer_funding'}})}}
-    <div id style="color : red;">
+    <div  style="color : red;">
         {{ form_errors(form.title) }}
     </div>
 
@@ -46,7 +46,7 @@
 </div>
 <div class="modal-footer">
     {{ form_widget(form.Submit, {'label': button_label, 'attr': {'class': 'btn btn-success'}}) }}
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+{#    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>#}
 </div>
 
 {{ form_end(form) }}
