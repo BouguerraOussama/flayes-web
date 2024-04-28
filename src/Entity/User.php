@@ -17,7 +17,7 @@ class User
     private ?int $id = null;
 
 
-    #[ORM\Column(name: "name" , type: "string" , length:255 ,nullable: "false")]
+    #[ORM\Column(name: "user_name" , type: "string" , length:255 ,nullable: "false")]
     private ?string $name = null;
 
 

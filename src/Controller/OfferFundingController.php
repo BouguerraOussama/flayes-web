@@ -4,30 +4,37 @@ namespace App\Controller;
 
 use App\Entity\Offer;
 use App\Entity\Funding;
+use App\Entity\User;
 use App\Form\OfferFundingType;
-use App\Form\OfferType;
 use App\Repository\FundingRepository;
 use App\Repository\OfferRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Validator\Constraints\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
 #[Route('/OfferFunding')]
 class OfferFundingController extends AbstractController
 {
     #[Route('/', name: 'app_Offerfunding_index', methods: ['GET'])]
-    public function index(OfferRepository $offer ,FundingRepository $funding): Response
+    public function index(OfferRepository $offer , FundingRepository $funding, Request $request, UserRepository $userRepository): Response
     {
+
         return $this->render('OfferFunding/index.html.twig', [
           'offers' => $offer->findAll(),
             'fundings' => $funding->findAll()
         ]);
     }
     #[Route('/new', name: 'app_OfferFunding_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager , UserRepository $userRepository): Response
     {
+//       Retrieving User here
+        $session=$request->getSession();
+        $user =$userRepository->find($session->get('UserId'));
+//      End retrieving User here
         $offer = new Offer();
         $funding = new Funding();
         $form = $this->createForm(OfferFundingType::class,  $offer);
@@ -36,6 +43,9 @@ class OfferFundingController extends AbstractController
             $formData = $form->getData();
             $formData->setDateCreated(new \DateTime());
             $formData->setStatus(0);
+
+            $offer->setUser($user);
+
             $funding=$formData->getFunding();
             $this->calculateOfferScore($funding);
 
@@ -55,6 +65,7 @@ class OfferFundingController extends AbstractController
     #[Route('/{id}/edit', name: 'app_OfferFunding_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, $id , EntityManagerInterface $entityManager): Response
     {
+//        $session=$request->getSession();
         $offer = $entityManager->getRepository(Offer::class)->find($id);
         $funding = $offer->getFunding();
         $this->calculateOfferScore($funding);
