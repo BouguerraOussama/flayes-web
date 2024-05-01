@@ -37,7 +37,7 @@ class FundingType extends AbstractType
             ]
             ])
             ->add('attribute1', TextType::class, [
-                'label' => 'Investment amount (dt)',
+                'label' => 'Investment amount (usd)',
                 'required' => true,
                 'constraints' => [
                     new NotBlank([

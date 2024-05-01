@@ -4,30 +4,38 @@ namespace App\Controller;
 
 use App\Entity\Offer;
 use App\Entity\Funding;
+use App\Entity\Project;
 use App\Entity\User;
 use App\Form\OfferFundingType;
 use App\Repository\FundingRepository;
 use App\Repository\OfferRepository;
+use App\Repository\ProjectRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use JetBrains\PhpStorm\NoReturn;
+use Stripe\Stripe;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Validator\Constraints\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
 #[Route('/OfferFunding')]
 class OfferFundingController extends AbstractController
 {
     #[Route('/', name: 'app_Offerfunding_index', methods: ['GET'])]
-    public function index(OfferRepository $offer , FundingRepository $funding, Request $request, UserRepository $userRepository): Response
+    public function index(OfferRepository $offer , FundingRepository $funding, Request $request, UserRepository $userRepository ,ProjectRepository $projectRepository): Response
     {
-
+        $session=$request->getSession();
         return $this->render('OfferFunding/index.html.twig', [
-          'offers' => $offer->findAll(),
+          'OffersImade' => $offer->findOffersImade($session->get('UserId')),
+            'OffersIgot' => $offer->findOffersIgot($session->get('UserId')),
             'fundings' => $funding->findAll()
         ]);
     }
+//    this function
     #[Route('/new', name: 'app_OfferFunding_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager , UserRepository $userRepository): Response
     {
@@ -45,6 +53,11 @@ class OfferFundingController extends AbstractController
             $formData->setStatus(0);
 
             $offer->setUser($user);
+
+//          Static adding project and reciever
+            $porject= $entityManager->getRepository(Project::class)->find(33);
+            $offer->setProject($porject);
+            $offer->setReciever($porject->getUser());
 
             $funding=$formData->getFunding();
             $this->calculateOfferScore($funding);
@@ -68,6 +81,7 @@ class OfferFundingController extends AbstractController
 //        $session=$request->getSession();
         $offer = $entityManager->getRepository(Offer::class)->find($id);
         $funding = $offer->getFunding();
+        $offer->setStatus(0);
         $this->calculateOfferScore($funding);
 
         if (!$offer) {
@@ -91,7 +105,7 @@ class OfferFundingController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_offer_delete')]
+    #[Route('/{id}/delete', name: 'app_offer_delete')]
     public function delete(Request $request, $id , EntityManagerInterface $entityManager,OfferRepository $offerRepository): Response
     {
         $offer = $offerRepository->find($id);
@@ -103,11 +117,96 @@ class OfferFundingController extends AbstractController
         }
         else{
             dump($offer);
-            die("Error offer not found");
+            die("Error where");
         }
         return $this->redirectToRoute('app_Offerfunding_index', [], Response::HTTP_SEE_OTHER);
     }
 
+    #[Route('/{id}/reject', name: 'app_offer_reject')]
+    public function Reject(Request $request, $id , EntityManagerInterface $entityManager,OfferRepository $offerRepository): Response
+    {
+        $offer = $offerRepository->find($id);
+
+        if ($offer) {
+            $offer->setStatus(4);
+            $entityManager->persist($offer);
+
+            $entityManager->flush();
+        }
+        else{
+            dump($offer);
+            die("Error offer not found");
+        }
+        return $this->redirectToRoute('app_Offerfunding_index', [], Response::HTTP_SEE_OTHER);
+    }
+    #[Route('/{id}/accept', name: 'app_offer_accept')]
+    public function Accept(Request $request, $id , EntityManagerInterface $entityManager,OfferRepository $offerRepository): Response
+    {
+        $offer = $offerRepository->find($id);
+
+        if ($offer) {
+            $offer->setStatus(3);
+            $entityManager->persist($offer);
+
+            $entityManager->flush();
+        }
+        else{
+            dump($offer);
+            die("Error offer not found");
+        }
+        return $this->redirectToRoute('app_Offerfunding_index', [], Response::HTTP_SEE_OTHER);
+    }
+    #[Route('/{id}/checkout', name: 'app_offer_pay')]
+    public function checkout(Request $request, $id ,OfferRepository $offerRepository): Response
+    {
+        $offer = $offerRepository->find($id);
+        $funding=$offer->getFunding();
+        $stripe = new \Stripe\StripeClient('sk_test_51OqZ3YLdtRvtorIBI6PHfTH7iGGb64aLqBG7z3jIEGlSmui5sNxJ3mjr8GsKxg3dDFP6L0O9dx5L3PbOwFhrhXRi00LLRcqQUf');
+
+        $checkout_session = $stripe->checkout->sessions->create([
+            'line_items' => [[
+                'price_data' => [
+                    'currency' => 'usd',
+                    'product_data' => [
+                        'name' => $offer->getTitle(),
+                    ],
+                    'unit_amount' => $funding->getAttribute1(),
+                ],
+                'quantity' => $funding->getAttribute2(),
+            ]],
+            'mode' => 'payment',
+            'success_url'          => $this->generateUrl('success_url', ['id' => $id], UrlGeneratorInterface::ABSOLUTE_URL),
+            'cancel_url'           => $this->generateUrl('cancel_url', ['id' => $id], UrlGeneratorInterface::ABSOLUTE_URL),
+        ]);
+        return $this->redirect($checkout_session->url , 303);
+    }
+    #[Route('/success-url/{id}', name: 'success_url')]
+    public function successUrl($id, EntityManagerInterface $entityManager): Response
+    {
+        $offer = $entityManager->getRepository(Offer::class)->find($id);
+
+        // Set offer status to 5 (successful payment)
+        $offer->setStatus(5);
+        $entityManager->flush();
+
+        return $this->render('OfferFunding/payment.html.twig', [
+            'message' => 'successfull',
+        ]);
+    }
+
+    #[Route('/cancel-url/{id}', name: 'cancel_url')]
+    public function cancelUrl($id, EntityManagerInterface $entityManager): Response
+    {
+        $offer = $entityManager->getRepository(Offer::class)->find($id);
+
+        // Set offer status to 6 (payment error)
+        $offer->setStatus(6);
+        $entityManager->flush();
+
+        return $this->render('OfferFunding/payment.html.twig', [
+            'message' => 'error',
+        ]);
+    }
     private function calculateOfferScore(Funding $funding) {
         switch ($funding->getType()) {
             case 'dept':
@@ -175,7 +274,6 @@ class OfferFundingController extends AbstractController
         }
         $funding->setScore($score);
     }
-
 
 
 

@@ -68,10 +68,10 @@
                                 {% if status == 0 %}
                             <td style="color: #a0a003">
                                     on hold
-                                {% elseif status == 1 %}
+                                {% elseif status == 2 %}
                             <td style="color: green">
                                     accepted
-                                {% elseif status == 2 %}
+                                {% elseif status == 1 %}
                             <td style="color: red">
                                     rejected
                                 {% endif %}
@@ -84,10 +84,10 @@
                                     <a class="btn btn-outline-success btn-sm" href="{{ path('app_offer_admin_accept', {'id': offer.id}) }}" >accept</a>
                                     <a class="btn btn-outline-warning btn-sm" href="{{ path('app_offer_admin_reject', {'id': offer.id}) }}" >reject</a>
                                     <a class="btn btn-outline-danger btn-sm" href="{{ path('app_offer_admin_delete', {'id': offer.id}) }}">delete</a>
-                                {% elseif status == 1 %}
+                                {% elseif status == 2 %}
                                     <a class="btn btn-outline-warning btn-sm" href="{{ path('app_offer_admin_reject', {'id': offer.id}) }}" >reject</a>
                                     <a class="btn btn-outline-danger btn-sm" href="{{ path('app_offer_admin_delete', {'id': offer.id}) }}">delete</a>
-                                {% elseif status == 2 %}
+                                {% elseif status == 1 %}
                                     <a class="btn btn-outline-success btn-sm" href="{{ path('app_offer_admin_accept', {'id': offer.id}) }}" >accept</a>
                                     <a class="btn btn-outline-danger btn-sm" href="{{ path('app_offer_admin_delete', {'id': offer.id}) }}">delete</a>
                                 {% endif %}

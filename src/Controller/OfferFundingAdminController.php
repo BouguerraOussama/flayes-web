@@ -21,29 +21,14 @@ class OfferFundingAdminController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/accept', name: 'app_offer_admin_accept')]
-    public function adminAccept(Request $request, $id , EntityManagerInterface $entityManager,OfferRepository $offerRepository): Response
-    {
-        $offer = $offerRepository->find($id);
 
-        if ($offer) {
-            $offer->setStatus(1);
-            $entityManager->persist($offer);
-            $entityManager->flush();
-        }
-        else{
-            dump($offer);
-            die("Error offer not found");
-        }
-        return $this->redirectToRoute('app_offer_funding_admin', [], Response::HTTP_SEE_OTHER);
-    }
     #[Route('/{id}/reject', name: 'app_offer_admin_reject')]
     public function adminReject(Request $request, $id , EntityManagerInterface $entityManager,OfferRepository $offerRepository): Response
     {
         $offer = $offerRepository->find($id);
 
         if ($offer) {
-            $offer->setStatus(2);
+            $offer->setStatus(1);
             $entityManager->persist($offer);
 
             $entityManager->flush();
@@ -54,7 +39,22 @@ class OfferFundingAdminController extends AbstractController
         }
         return $this->redirectToRoute('app_offer_funding_admin', [], Response::HTTP_SEE_OTHER);
     }
+    #[Route('/{id}/accept', name: 'app_offer_admin_accept')]
+    public function adminAccept(Request $request, $id , EntityManagerInterface $entityManager,OfferRepository $offerRepository): Response
+    {
+        $offer = $offerRepository->find($id);
 
+        if ($offer) {
+            $offer->setStatus(2);
+            $entityManager->persist($offer);
+            $entityManager->flush();
+        }
+        else{
+            dump($offer);
+            die("Error offer not found");
+        }
+        return $this->redirectToRoute('app_offer_funding_admin', [], Response::HTTP_SEE_OTHER);
+    }
     #[Route('/{id}', name: 'app_offer_admin_delete')]
     public function delete(Request $request, $id , EntityManagerInterface $entityManager,OfferRepository $offerRepository): Response
     {

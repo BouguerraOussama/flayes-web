@@ -42,6 +42,11 @@ class Offer
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "id", nullable: false)]
     private ?User $user;
 
+    #[ORM\ManyToOne]
+    private ?User $reciever = null;
+
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -127,6 +132,29 @@ class Offer
     public function setUser(?User $user): static
     {
         $this->user = $user;
+        return $this;
+    }
+
+    public function getRecieverId(): ?int
+    {
+        return $this->reciever_id;
+    }
+
+    public function setRecieverId(?int $reciever_id): static
+    {
+        $this->reciever_id = $reciever_id;
+
+        return $this;
+    }
+
+    public function getReciever(): ?User
+    {
+        return $this->reciever;
+    }
+
+    public function setReciever(?User $reciever): static
+    {
+        $this->reciever = $reciever;
 
         return $this;
     }

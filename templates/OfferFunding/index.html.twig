@@ -25,13 +25,13 @@
     </div>
         <div class="tab faq-tab">
             <ul class="tab-menu">
-                <li >Offers i made</li>
-{#                <li class="active">Offers i got</li>#}
+                <li class="active">Offers i made</li>
+                <li>Offers i got</li>
             </ul>
-            <!-- Offers i made here -->
             <div class="tab-area">
-                <div class="tab-item">
-                    {% for key, offer in offers %}
+                <!-- Offers i made here -->
+                <div class="tab-item active">
+                    {% for key, offer in OffersImade %}
                         {% if fundings[key] is defined %}
                         {% set funding = fundings[key] %}
                     <div class="faq-wrapper">
@@ -45,15 +45,17 @@
 
                                 {% set status = offer.status %}
                                 {% if status == 0 %}
-                                    <p><strong>Status:</strong> waiting for admin to verify</p>
+                                    <p style="color: yellow"><strong>Status:</strong> waiting for admin to verify</p>
                                 {% elseif status == 1 %}
-                                    <p><strong>Status:</strong> project owner can see your offer</p>
+                                    <p style="color: red"><strong>Status:</strong> project owner can't see your offer admin denied it</p>
                                 {% elseif status == 2 %}
-                                    <p><strong>Status:</strong> project owner can't see your offer admin denied it</p>
+                                    <p style="color: blue"><strong>Status:</strong> project owner can see your offer</p>
                                 {% elseif status == 3 %}
-                                    <p><strong>Status:</strong> project owner accepted your offer</p>
+                                    <p style="color: green"><strong>Status:</strong> project owner accepted your offer</p>
                                 {% elseif status == 4 %}
-                                    <p><strong>Status:</strong> project owner denied your offer</p>
+                                    <p style="color: red"><strong>Status:</strong> project owner denied your offer</p>
+                                {% elseif status == 5 %}
+                                    <p style="color: green"><strong>Status:</strong> Offer Concluded</p>
                                 {% endif %}
                                 {% set type=funding.type %}
                                 <p><strong>Offer type:</strong> {{ type }}</p>
@@ -71,9 +73,14 @@
                                     <p><strong>profit margin (%) on product sale:</strong> {{ funding.attribute3 }} %</p>
                                     <p><strong>Revenue category:</strong> {{ funding.textAttribute }} </p>
                                     {% endif %}
+                            {% if status == 3 %}
+                                <a class="btn btn-outline-success btn-sm" href="{{ path('app_offer_pay' , {'id': offer.id}) }}">pay up</a>
+                            {% elseif status == 4 %}
                                 <a class="btn btn-outline-success btn-sm" href="{{ path('app_OfferFunding_edit', {'id': offer.id}) }}" >edit</a>
 
                                 <a class="btn btn-outline-danger btn-sm" href="{{ path('app_offer_delete', {'id': offer.id}) }}">delete</a>
+                            {% endif %}
+
                             </div>
                         </div>
                     </div>
@@ -82,63 +89,66 @@
                             <h1 >no offers found</h1>
                     {% endfor %}
                 </div>
-{#                <div class="tab-item active">#}
-{#                    <div class="faq-wrapper">#}
+                <!-- Offers i got here -->
+                <div class="tab-item">
+                    {% for key, offer in OffersIgot %}
+                        {% if fundings[key] is defined %}
+                            {% set funding = fundings[key] %}
+                            <div class="faq-wrapper">
+                                <div class="faq-item ">
+                                    <div class="faq-title">
+                                        <h5 class="title">{{ offer.title }}</h5>
+                                        <span class="right-icon"></span>
+                                    </div>
+                                    <div class="faq-content">
+                                        <p><strong>Description:</strong> {{ offer.description }}</p>
+                                        {% set status = offer.status %}
+                                        {% if status == 3 %}
+                                            <p style="color: green"><strong>Status:</strong> you accepted this offer</p>
+                                        {% elseif status == 4 %}
+                                            <p style="color: red"><strong>Status:</strong> you rejected this offer</p>
+                                        {% elseif status == 5 %}
+                                            <p style="color: green"><strong>Status:</strong> Offer concluded</p>
+                                        {% endif %}
+                                        {% set type=funding.type %}
+                                        <p><strong>Offer type:</strong> {{ type }}</p>
+                                        <p><strong>Amount of investment:</strong> {{ funding.attribute1 }} dt</p>
+                                        {% if type == "dept" %}
+                                            <p><strong>Interest rate:</strong> {{ funding.attribute2 }} %</p>
+                                            <p><strong>Duration of investment:</strong> {{ funding.attribute3 }} years</p>
+                                            <p><strong>Credit rating:</strong> {{ funding.textAttribute }} </p>
+                                        {% elseif type == "equity" %}
+                                            <p><strong>Expected return on investment:</strong> {{ funding.attribute2 }} % of equity</p>
+                                            <p><strong>Investment horizon in months:</strong> {{ funding.attribute3 }} months</p>
+                                            <p><strong>Risk appetite:</strong> {{ funding.textAttribute }} </p>
+                                        {% elseif type == "revenue" %}
+                                            <p><strong>percentage of profit:</strong> {{ funding.attribute2 }} %</p>
+                                            <p><strong>profit margin (%) on product sale:</strong> {{ funding.attribute3 }} %</p>
+                                            <p><strong>Revenue category:</strong> {{ funding.textAttribute }} </p>
+                                        {% endif %}
 
-{#                        <div class="faq-item active open">#}
-{#                            <div class="faq-title">#}
-{#                                <h5 class="title">Can i invest using cryptocurrency?</h5>#}
-{#                                <span class="right-icon"></span>#}
-{#                            </div>#}
-{#                            <div class="faq-content">#}
-{#                                <p>#}
-{#                                    Ea commodi eius nisi fugiat eligendi neque repellendus vero, aliquam temporibus,#}
-{#                                    dicta optio eveniet saepe. Beatae hic fugiat qui possimus doloribus? Ratione,#}
-{#                                    molestiae magnam.#}
-{#                                </p>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </div>#}
+                                        {% if status == 3 %}
+                                            <a class="btn btn-outline-danger btn-sm" href="{{ path('app_offer_reject', {'id': offer.id}) }}">reject</a>
+                                        {% elseif status == 4 %}
+                                            <a class="btn btn-outline-success btn-sm" href="{{ path('app_offer_accept', {'id': offer.id}) }}" >accept</a>
+                                        {% elseif status == 5 %}
+
+                                        {% else %}
+                                            <a class="btn btn-outline-success btn-sm" href="{{ path('app_offer_accept', {'id': offer.id}) }}" >accept</a>
+                                            <a class="btn btn-outline-danger btn-sm" href="{{ path('app_offer_reject', {'id': offer.id}) }}">reject</a>
+                                        {% endif %}
+
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <h1 >no offers found</h1>
+                    {% endfor %}
+                </div>
 
             </div>
         </div>
-{#    <h1>Offer index</h1>#}
-
-
-{#    <table class="table">#}
-{#        <thead>#}
-{#        <tr>#}
-{#            <th>Id</th>#}
-{#            <th>Title</th>#}
-{#            <th>Description</th>#}
-{#            <th>Status</th>#}
-{#            <th>DateCreated</th>#}
-{#            <th>actions</th>#}
-{#        </tr>#}
-{#        </thead>#}
-{#        <tbody>#}
-{#        {% for offer in offers %}#}
-{#            <tr>#}
-{#                <td>{{ offer.id }}</td>#}
-{#                <td>{{ offer.title }}</td>#}
-{#                <td>{{ offer.description }}</td>#}
-{#                <td>{{ offer.status }}</td>#}
-{#                <td><i class="far fa-calendar"></i>{{ offer.dateCreated ? offer.dateCreated|date('Y-m-d') : '' }}</td>#}
-{#                <td>#}
-{#                    <a href="{{ path('', {'id': offer.id}) }}">show</a>#}
-{#                    <a href="{{ path('app_OfferFunding_edit', {'id': offer.id}) }}">edit</a>#}
-{#                    <a href="{{ path('app_offer_delete', {'id': offer.id}) }}">delete</a>#}
-{#                </td>#}
-{#            </tr>#}
-{#        {% else %}#}
-{#            <tr>#}
-{#                <td colspan="6">no records found</td>#}
-{#            </tr>#}
-{#        {% endfor %}#}
-{#        </tbody>#}
-{#    </table>#}
-
     <a href="{{ path('app_OfferFunding_new') }}">browse other projects</a>
     </div>
 {% endblock %}
