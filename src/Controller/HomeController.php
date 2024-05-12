@@ -21,7 +21,7 @@ class HomeController extends AbstractController
     {
 
         $session=$request->getSession();
-        $session->set('UserId' , 7);
+        $session->set('UserId' , 2);
 
         return $this->render('home/index.html.twig', [
             'controller_name' => 'HomeController',

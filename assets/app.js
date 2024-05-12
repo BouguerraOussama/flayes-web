@@ -2,7 +2,7 @@
  * Welcome to your app's main JavaScript file!
  *
  * We recommend including the built version of this JavaScript file
- * (and its CSS file) in your twig elements layout (public.html.twig).
+ * (and its CSS file) in your twig elements layout (base.html.twig).
  */
 
 

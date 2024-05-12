@@ -9,43 +9,37 @@
     <div class="container-fluid">
         <div class="operations">
             <h3 class="main-title">Manage Offers</h3>
-            <form class="operation-filter">
+{#            <div class="select-item">#}
+{#                <select class="select-bar">#}
+            <form class="operation-filter" action="{{ path('app_offer_funding_admin') }}" method="get">
                 <div class="filter-item">
-                    <label for="date">Date from:</label>
-                    <input type="date" placeholder="Date from">
+                    <label for="date_from">Date from:</label>
+                    <input type="date" id="date_from" name="date_from" placeholder="Date from">
                 </div>
                 <div class="filter-item">
-                    <label for="date">Date To:</label>
-                    <input type="date" placeholder="Date from">
+                    <label for="date_to">Date To:</label>
+                    <input type="date" id="date_to" name="date_to" placeholder="Date to">
                 </div>
                 <div class="filter-item">
-                    <label>Operation:</label>
-                    <div class="select-item">
-                        <select class="select-bar">
-                            <option value="o1">Add funds</option>
-                            <option value="o2">Withdraw funds</option>
-                            <option value="o4">Deposit funds</option>
-                            <option value="o3">Transfer funds</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="filter-item">
-                    <label>Status:</label>
-                    <div class="select-item">
-                        <select class="select-bar">
-                            <option value="p1">Prepared</option>
-                            <option value="p2">Prepared</option>
-                            <option value="p3">Prepared</option>
-                            <option value="p4">Prepared</option>
-                            <option value="p5">Prepared</option>
-                            <option value="p6">Prepared</option>
-                        </select>
+                    <label for="status">Status:</label>
+                    <div>
+                    <select id="status" name="status" class="select-bar">
+                        <option value="">Select status</option>
+                        <option value="0">On hold</option>
+                        <option value="1">Rejected</option>
+                        <option value="2">Accepted by admin</option>
+                        <option value="3">Accepted</option>
+                        <option value="4">Accepted</option>
+                        <option value="5">Accepted</option>
+                        <!-- Add more status options if needed -->
+                    </select>
                     </div>
                 </div>
                 <div class="filter-item">
                     <button type="submit" class="custom-button">Filter</button>
                 </div>
             </form>
+
             <div class="table-wrapper">
                 <table class="transaction-table">
                     <thead>

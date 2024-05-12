@@ -71,4 +71,25 @@ class OfferRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function findFilteredOffers($dateFrom, $dateTo, $status): array
+    {
+        $qb = $this->createQueryBuilder('o');
+
+        if ($dateFrom) {
+            $qb->andWhere('o.dateCreated >= :dateFrom')
+                ->setParameter('dateFrom', $dateFrom);
+        }
+
+        if ($dateTo) {
+            $qb->andWhere('o.dateCreated <= :dateTo')
+                ->setParameter('dateTo', $dateTo);
+        }
+
+        if ($status) {
+            $qb->andWhere('o.status = :status')
+                ->setParameter('status', $status);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 }

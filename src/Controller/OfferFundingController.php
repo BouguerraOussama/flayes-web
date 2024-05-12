@@ -11,6 +11,7 @@ use App\Repository\FundingRepository;
 use App\Repository\OfferRepository;
 use App\Repository\ProjectRepository;
 use App\Repository\UserRepository;
+use App\Service\MailerService;
 use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\NoReturn;
 use Stripe\Stripe;
@@ -19,6 +20,9 @@ use Symfony\Component\Form\Extension\Validator\Constraints\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -139,21 +143,26 @@ class OfferFundingController extends AbstractController
         }
         return $this->redirectToRoute('app_Offerfunding_index', [], Response::HTTP_SEE_OTHER);
     }
+
     #[Route('/{id}/accept', name: 'app_offer_accept')]
-    public function Accept(Request $request, $id , EntityManagerInterface $entityManager,OfferRepository $offerRepository): Response
+    public function Accept(Request $request, $id , EntityManagerInterface $entityManager,OfferRepository $offerRepository , MailerService $mailer): Response
     {
         $offer = $offerRepository->find($id);
+        $reciever=$entityManager->getRepository(User::class)->find($offer->getUser());
 
+        $mailer->sendEmail($offer , $reciever);
         if ($offer) {
             $offer->setStatus(3);
             $entityManager->persist($offer);
 
             $entityManager->flush();
+
         }
         else{
             dump($offer);
             die("Error offer not found");
         }
+
         return $this->redirectToRoute('app_Offerfunding_index', [], Response::HTTP_SEE_OTHER);
     }
     #[Route('/{id}/checkout', name: 'app_offer_pay')]
